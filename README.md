@@ -1,4 +1,6 @@
 # curso-jquery
 Arquivos do curso de jquery da hcode.
 
-Jquery, nodejs, expressjs e insomnia
+Técnologias aprendidas: jQuery, nodejs, expressjs e insomnia para testes.
+
+
