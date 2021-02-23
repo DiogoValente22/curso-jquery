@@ -8,7 +8,52 @@
 </head>
 <body>
     
+    <h1>Hcode Treinamentos</h1>
+
+    <h2>Seção de Plugins</h2>
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
+
+    <script>
+
+        (function($){
+
+            $.fn.changeText = function(params) {
+
+                let defaults = {
+                    fontSize: 30,
+                    color: '#ccc',
+                    fontFamily: 'Verdana'
+                };
+
+                let options = $.extend(defaults, params)
+
+                return this.each(function(){
+
+                    $(this).css({
+                        'font-size': options.fontSize + 'px',
+                        'color': options.color,
+                        'font-family': options.fontFamily
+                    });
+
+                });
+
+            }
+
+        })(jQuery);
+
+        
+
+        $(() => {
+
+            $('h1').changeText({
+                fontSize: 40,
+                fontFamily: 'Arial'
+            })
+
+        })
+
+    </script>
+
 </body>
 </html>
