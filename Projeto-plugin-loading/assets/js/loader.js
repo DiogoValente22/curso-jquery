@@ -32,7 +32,7 @@
                     $(divToAppend).append(divBox);
                     $(divBox).append(divLoad);
 
-                    $(this).append(divToAppend);
+                    $(this).append(divToAppend).hide().fadeIn('slow');
 
                 break;
 
