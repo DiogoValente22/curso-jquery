@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Select2</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Hcode Treinamentos</h1>
+        <form action="">
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="">Nome</label>
+                        <input type="text" name="username" id="" class="form-control">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="">Email</label>
+                        <input type="email" name="email" id="" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="">Selecione seu estado</label>
+                        <select name="" id="select-states" class="form-control" multiple>
+                                <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/select2/dist/js/select2.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+
+            $('#select-states').select2({
+                ajax: {
+                    url: 'https://servicodados.ibge.gov.br/api/v1/localidades/estados',
+                    processResults: (data,params) => {
+
+                        return {
+                            results: data
+                        }
+
+                    }
+                },
+                templateResult: (data) => {
+
+                    return data.nome;
+
+                }
+            });
+
+        });
+
+    </script>
+
+</body>
+
+</html>
