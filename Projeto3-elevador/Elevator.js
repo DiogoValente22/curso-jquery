@@ -9,28 +9,40 @@ class Elevator {
 
     openDoor() {
 
-        if(this.isDoorsOpen()){
+        return new Promise((resolve,reject) =>{
 
-            return true;
+            if(this.isDoorsOpen()){
 
-        }else {
+                resolve();
+    
+            }else {
+    
+                this.$elevator.find('.door').addClass('open');
 
-            this.$elevator.find('.door').addClass('open');
+                resolve();
+    
+            }
 
-        }
-
-        
+        });  
 
     }
     closeDoor() {
 
-        if(this.isDoorsOpen()){
+        return new Promise((resolve, reject) => {
 
-            this.$elevator.find('.door').removeClass('open');
+            if(this.isDoorsOpen()){
 
-        }else {
-            return true;
-        }
+                this.$elevator.find('.door').removeClass('open');
+
+                resolve();
+
+            }else {
+                resolve();
+            }
+
+        });
+
+        
 
     }
 
@@ -44,11 +56,39 @@ class Elevator {
 
     goToFloor(number){
 
-        this.removeFloorClasses();
+        this.closeDoor().then(() => {
 
-        this.$elevator.addClass(`floor${number}`);
+            new Promise ((resolve, reject) => {
 
-        this.$elevator.data('floor', number);
+                this.removeFloorClasses();
+
+                let currentFloor = this.$elevator.data('floor');
+                let diff = number - currentFloor;
+                let time = diff * 2;
+
+                this.$elevator.addClass(`floor${number}`);
+
+                this.$elevator.data('floor', number);
+
+                this.$elevator.css('-webkit-transition-duration', `${time}s`);
+
+                this.$elevator.on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', () => {
+                    resolve();
+                });
+
+            }).then(() => {
+
+                this.openDoor();
+
+                setTimeout(() => {
+
+                    this.closeDoor();
+                     
+                }, 3000);
+
+            });
+
+        });  
 
     }
     removeFloorClasses() {
