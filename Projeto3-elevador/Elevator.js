@@ -4,7 +4,22 @@ class Elevator {
 
         this.$elevator = $('.elevator');
         this.floorQtd = 3;
+        this.initEvents();
 
+    }
+
+    initEvents() {
+        $('.buttons .btn').on('click', e => {
+
+            let btn = e.target;
+
+            $(btn).addClass('floor-selected');
+
+            let floor = $(btn).data('floor');
+
+            this.goToFloor(floor);
+
+        })
     }
 
     openDoor() {
@@ -78,7 +93,11 @@ class Elevator {
 
             }).then(() => {
 
+                this.setDisplay(number);
+
                 this.openDoor();
+
+                $(`.buttons .button${number}`).removeClass('floor-selected');
 
                 setTimeout(() => {
 
@@ -91,6 +110,13 @@ class Elevator {
         });  
 
     }
+
+    setDisplay(floor) {
+
+        this.$elevator.find('.display').text(floor);
+
+    }
+
     removeFloorClasses() {
 
         for(let i = 1; i <= this.floorQtd; i++) {
