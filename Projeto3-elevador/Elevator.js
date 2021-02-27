@@ -4,6 +4,8 @@ class Elevator {
 
         this.$elevator = $('.elevator');
         this.floorQtd = 3;
+        this.isMovement = false;
+        this.queue = [];
         this.initEvents();
 
     }
@@ -28,13 +30,23 @@ class Elevator {
 
             if(this.isDoorsOpen()){
 
-                resolve();
+                this.transitionEnd(() => {
+
+                    resolve();
+
+                });
     
             }else {
-    
+
                 this.$elevator.find('.door').addClass('open');
 
-                resolve();
+                this.transitionEnd(() => {
+
+                    resolve();
+
+                });
+    
+                
     
             }
 
@@ -49,10 +61,16 @@ class Elevator {
 
                 this.$elevator.find('.door').removeClass('open');
 
-                resolve();
+                setTimeout(() => {
+
+                    resolve();
+                    
+                }, 1500);
 
             }else {
+
                 resolve();
+
             }
 
         });
@@ -69,46 +87,92 @@ class Elevator {
          
     }
 
+    transitionEnd(callback) {
+
+        this.$elevator.on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', () => {
+
+            callback();
+
+        });
+
+    }
+
     goToFloor(number){
 
-        this.closeDoor().then(() => {
+        if(!this.isMovement) {
 
-            new Promise ((resolve, reject) => {
+            this.isMovement = true;
 
-                this.removeFloorClasses();
+            this.closeDoor().then(() => {
 
-                let currentFloor = this.$elevator.data('floor');
-                let diff = number - currentFloor;
-                let time = diff * 2;
+                new Promise ((resolve, reject) => {
 
-                this.$elevator.addClass(`floor${number}`);
+                    let currentFloor = this.$elevator.data('floor');
 
-                this.$elevator.data('floor', number);
+                    if (number !== currentFloor) {
 
-                this.$elevator.css('-webkit-transition-duration', `${time}s`);
+                    this.removeFloorClasses();
 
-                this.$elevator.on('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', () => {
-                    resolve();
+                        let diff = number - currentFloor;
+                        let time = diff * 2;
+
+                        this.$elevator.addClass(`floor${number}`);
+
+                        this.$elevator.data('floor', number);
+
+                        this.$elevator.css('-webkit-transition-duration', `${time}s`);
+
+                        this.transitionEnd(() => {
+
+                            resolve();
+
+                        });
+                    } else {
+
+                        resolve();
+
+                    }
+
+
+                }).then(() => {
+
+                    this.setDisplay(number);
+
+                    this.openDoor().then(() => {
+
+                        $(`.buttons .button${number}`).removeClass('floor-selected');
+
+                        this.isMovement = false;
+
+                        setTimeout(() => {
+    
+                            this.closeDoor();
+                            
+                        }, 3000);
+
+                        setTimeout(() => {
+
+                            if (this.queue.length) {
+
+                                let newFloor = this.queue.shift();
+
+                                this.goToFloor(newFloor);
+
+                            }
+
+                        }, 2000);
+
+                    });
+
                 });
 
-            }).then(() => {
+            });  
 
-                this.setDisplay(number);
+        } else {
 
-                this.openDoor();
+            this.queue.push(number);
 
-                $(`.buttons .button${number}`).removeClass('floor-selected');
-
-                setTimeout(() => {
-
-                    this.closeDoor();
-                     
-                }, 3000);
-
-            });
-
-        });  
-
+        }
     }
 
     setDisplay(floor) {
